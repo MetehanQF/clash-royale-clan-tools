@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  bot:
+    name: War bot tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r bot/requirements.txt
+      # The tests load the module with fake credentials and mock every HTTP call;
+      # nothing reaches Telegram or the Clash Royale API.
+      - run: python -m unittest -v test_cr_war_bot
+        working-directory: bot
+
+  web:
+    name: Dashboard smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r web/requirements.txt
+      # With no credentials configured the API routes must fail closed with 503,
+      # never call out, and the page must still render.
+      - name: Routes without configuration
+        working-directory: web
+        env:
+          CR_API_KEY: ""
+          CLAN_TAG: ""
+        run: |
+          python - <<'EOF'
+          import app
+          c = app.app.test_client()
+          assert c.get("/").status_code == 200
+          assert c.get("/api/status").get_json() == {"status": "ok"}
+          for path in ("/api/river-race", "/api/history"):
+              r = c.get(path)
+              assert r.status_code == 503 and "error" in r.get_json(), path
+          print("ok")
+          EOF
+
+  privacy-gate:
+    name: Privacy gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan for anything identifying a real installation
+        run: python3 .github/scripts/privacy_gate.py .

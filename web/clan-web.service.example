@@ -1,0 +1,21 @@
+# Example systemd unit for the dashboard. Copy to /etc/systemd/system/clan-web.service,
+# replace YOUR_USER and /opt/clash-royale-clan-tools with your own values, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now clan-web.service
+# It listens on loopback only; put a reverse proxy or tunnel in front of it.
+[Unit]
+Description=Clash Royale Clan Dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=YOUR_USER
+WorkingDirectory=/opt/clash-royale-clan-tools/web
+# Root-owned, mode 0600; only CR_API_KEY and CLAN_TAG are needed here.
+EnvironmentFile=/etc/clan-web.env
+ExecStart=/opt/clash-royale-clan-tools/web/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:5000 --timeout 30 --graceful-timeout 20 --access-logfile - --error-logfile - app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,18 @@
+# Real configuration never lives in the repo
+*.env
+!.env.example
+
+# Runtime state written by the bot
+bot/state/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Editors / OS
+.DS_Store
+*.swp
+*~

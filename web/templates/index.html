@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090610">
+  <title>Riverwatch · Klan Savaşı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+  <div class="page-glow" aria-hidden="true"></div>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-shield">✦</span><span>RIVER<span>WATCH</span></span></div>
+      <span class="topbar-caption">CLAN WAR COMPANION <span class="tiny-star">✦</span></span>
+    </header>
+
+    <section class="hero" aria-labelledby="clan-name">
+      <div class="hero-content">
+        <div class="hero-eyebrow"><span class="eyebrow-dash"></span> CLAN WAR INTELLIGENCE</div>
+        <p class="hero-overline">RIVER RACE DASHBOARD</p>
+        <h1 id="clan-name">Savaş Alanı</h1>
+        <div id="clan-tag" class="hero-tag">—</div>
+        <div class="hero-status"><span class="signal"><span></span></span><span id="race-state">Canlı veri bekleniyor</span><span class="status-divider"></span><span>Clash Royale API</span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="art-ring ring-outer"></div><div class="art-ring ring-inner"></div><div class="art-shield"><span class="art-default">⚔</span><img src="{{ url_for('static', filename='images/clan-logo.png') }}" alt="" onload="this.parentElement.classList.add('has-logo')" onerror="this.remove()"></div><span class="art-spark spark-one">✦</span><span class="art-spark spark-two">✧</span></div>
+      <div class="hero-corner">R / W <span>◆</span> 01</div>
+    </section>
+
+    <nav class="week-tabs" aria-label="Yarış haftaları">
+      <button class="week-tab active" type="button" data-week="today" aria-current="page"><span class="tab-glyph">◉</span> BUGÜN</button>
+      <button class="week-tab" type="button" data-week="0">1. HAFTA</button>
+      <button class="week-tab" type="button" data-week="1">2. HAFTA</button>
+      <button class="week-tab" type="button" data-week="2">3. HAFTA</button>
+      <button class="week-tab" type="button" data-week="3">4. HAFTA</button>
+    </nav>
+
+    <div id="error-message" class="error-message" role="alert" hidden></div>
+    <section id="today-summary" class="summary-section" aria-labelledby="summary-title">
+      <div class="section-heading"><div><p class="eyebrow">SAVAŞ DURUMU <span>✦</span></p><h2 id="summary-title">Bugünün özeti</h2></div><button id="refresh-button" class="refresh-button" type="button"><span class="refresh-icon">↻</span><span>Yenile</span></button></div>
+      <div class="stats-grid">
+        <article class="stat-card stat-participants"><span class="stat-icon">♛</span><span class="stat-info"><span class="stat-title">KATILIMCI</span><strong id="stat-participants">—</strong><span class="stat-caption">Yarıştaki oyuncu</span></span></article>
+        <article class="stat-card stat-completed"><span class="stat-icon">✓</span><span class="stat-info"><span class="stat-title">BUGÜN 4/4</span><strong id="stat-completed">—</strong><span class="stat-caption">Tüm haklarını kullandı</span></span></article>
+        <article class="stat-card stat-remaining"><span class="stat-icon">⚡</span><span class="stat-info"><span class="stat-title">HAKKI KALAN</span><strong id="stat-remaining">—</strong><span class="stat-caption">Savaşa hazır</span></span></article>
+        <article class="stat-card stat-zero"><span class="stat-icon">◷</span><span class="stat-info"><span class="stat-title">HENÜZ 0/4</span><strong id="stat-zero">—</strong><span class="stat-caption">Bugün başlamadı</span></span></article>
+        <article class="stat-card stat-under"><span class="stat-icon">◈</span><span class="stat-info"><span class="stat-title">2400 ALTI</span><strong id="stat-under2400">—</strong><span class="stat-caption">Hedefe doğru</span></span></article>
+      </div>
+    </section>
+
+    <section class="roster" aria-labelledby="roster-heading">
+      <div class="section-heading roster-heading"><div><p id="roster-eyebrow" class="eyebrow">KLAN KADROSU <span>✦</span></p><h2 id="roster-heading">Savaşçılar <span id="visible-count" class="count-badge">0</span></h2><p id="week-description" class="week-description">Bugünkü savaş hakları ve haftalık madalyalar</p></div><span id="last-updated" class="updated">Veri bekleniyor</span></div>
+      <div id="today-filters" class="filters" role="group" aria-label="Oyuncu filtreleri">
+        <button type="button" class="filter active" data-filter="all" aria-pressed="true">Tümü</button>
+        <button type="button" class="filter" data-filter="remaining" aria-pressed="false">Hakkı Kalanlar</button>
+        <button type="button" class="filter" data-filter="zero" aria-pressed="false">0/4 Yapanlar</button>
+        <button type="button" class="filter" data-filter="under2400" aria-pressed="false">2400 Altı</button>
+        <button type="button" class="filter" data-filter="completed" aria-pressed="false">Tamamlayanlar</button>
+      </div>
+      <div id="history-filters" class="filters" role="group" aria-label="Geçmiş hafta filtreleri" hidden><button type="button" class="history-filter active" data-history-filter="all" aria-pressed="true">Tümü</button><button type="button" class="history-filter" data-history-filter="under2400" aria-pressed="false">2400 Altı</button><button type="button" class="history-filter" data-history-filter="reached" aria-pressed="false">Hedefi Geçenler</button></div>
+      <div id="players" class="player-list" aria-live="polite"><div class="empty-state">Oyuncular yükleniyor…</div></div>
+    </section>
+    <footer><span>RIVERWATCH <b>✦</b></span><span>Yerel klan savaş paneli</span></footer>
+  </main>
+
+  <div id="player-modal" class="modal" hidden><div class="modal-backdrop" data-close-modal></div><section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-name" tabindex="-1"><div class="sheet-handle"></div><button class="modal-close" type="button" aria-label="Detayı kapat" data-close-modal>×</button><div id="modal-content"></div></section></div>
+</body>
+</html>

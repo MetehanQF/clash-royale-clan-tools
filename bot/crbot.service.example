@@ -1,0 +1,19 @@
+# Example systemd unit for the war bot. Copy to /etc/systemd/system/crbot.service,
+# replace YOUR_USER and /opt/clash-royale-clan-tools with your own values, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now crbot.service
+[Unit]
+Description=Clash Royale War Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=YOUR_USER
+WorkingDirectory=/opt/clash-royale-clan-tools/bot
+# Root-owned, mode 0600; see .env.example for the keys.
+EnvironmentFile=/etc/crbot.env
+ExecStart=/opt/clash-royale-clan-tools/bot/.venv/bin/python3 cr_war_bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
